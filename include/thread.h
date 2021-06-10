@@ -7,9 +7,6 @@
 #define NUMBER_OF_REGISTERS	15
 #define STACK_SIZE		2048
 
-void scheduler_entry();
-void exit_handler();
-
 typedef enum {
 	      FIRST_TIME,
 	      READY,
@@ -26,5 +23,8 @@ typedef struct tcb {
   void* stack;
   void* sp;
 } tcb_t;
+
+void scheduler_entry();
+void exit_handler();
 
 #endif /* THREAD_H */

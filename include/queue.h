@@ -5,7 +5,7 @@
 
 typedef struct node {
   void *thread_tcb;
-  int id_thread;
+  int thread_id;
   struct node *prox;
 } node_t;
 
