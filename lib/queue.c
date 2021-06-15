@@ -22,6 +22,7 @@ node_t *dequeue(node_t * queue)
   if(is_empty(queue->prox) == 0) {
     q = queue->prox;
     queue->prox = q->prox;
+    q->prox = NULL;
     return q;
   }
 	return NULL;
@@ -50,6 +51,3 @@ int is_empty(node_t *queue)
     return 1;
 	return 0;
 }
-
-
-

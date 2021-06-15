@@ -1,13 +1,13 @@
 #ifndef LOCK_H
 #define LOCK_H
 
-
 typedef struct {
 	enum {
 	      UNLOCKED,
 	      LOCKED,
 	} status;
-	// TODO: define a queue for the lock. 
+
+  void *lock_queue;
 } lock_t;
 
 void lock_init(lock_t *);

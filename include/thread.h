@@ -16,12 +16,12 @@ typedef enum {
 
 typedef struct tcb {
 	// TODO: define the fields for you TCB
-	uint64_t regs[NUMBER_OF_REGISTERS];
-  uint64_t flags;
 	status_t status;
   int thread_id;
-  void* stack;
-  void* sp;
+  uint64_t *stack;
+  uint64_t *sp;
+	uint64_t regs[NUMBER_OF_REGISTERS];
+  uint64_t flags;
 } tcb_t;
 
 void scheduler_entry();
