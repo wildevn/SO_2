@@ -30,10 +30,6 @@ int thread_init()
   main_tcb->status = 0; // FIRST TIME
   main_tcb->stack = (uint64_t *) malloc(STACK_SIZE);
   main_tcb->sp = main_tcb->stack + 8 * STACK_SIZE;
-  // Inicializar registradores
-  for (int i = 0; i < 15; i++)
-    main_tcb->regs[i] = NULL;
-  main_tcb->flags = NULL;
   main_node = (node_t *) malloc(sizeof(node_t));
   main_node->thread_tcb = main_tcb;
   main_node->thread_id = main_tcb->thread_id;
@@ -45,22 +41,20 @@ int thread_init()
 // TODO: creates a new thread and inserts in the ready queue.
 int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
+  tcb_t *tcb_aux;
   node_t *node;
-  node_t *aux;
+
   // Inicializing thread_tcb
-  thread->tcb = (tcb_t *) malloc(sizeof(tcb_t));
-  thread->tcb->thread_id = ++tid_global;
-  thread->tcb->status = 0; 
-  thread->tcb->stack = (uint64_t *) malloc(STACK_SIZE);
-  thread->tcb->sp = main_tcb->stack + 8 * STACK_SIZE;
-  // Inicializing registers
-  for (int i = 0; i < 15; i++)
-    thread->tcb->regs[i] = NULL;
-  thread->tcb->flags = NULL;
+  tcb_aux = (tcb_t *) malloc(sizeof(tcb_t));
+  tcb_aux->thread_id = ++tid_global;
+  tcb_aux->status = 0; 
+  tcb_aux->stack = (uint64_t *) malloc(STACK_SIZE);
+  tcb_aux->sp = tcb_aux->stack + 8 * STACK_SIZE;
+  thread->tcb = tcb_aux; 
   // Preparing to send to ready_queue
   node = (node_t *) malloc(sizeof(node_t));
-  node->thread_tcb = thread->tcb;
-  node->thread_id = thread->thread_id;
+  node->thread_tcb = tcb_aux;
+  node->thread_id = tcb_aux->thread_id;
   node->prox = NULL;
   enqueue(&ready_queue, node);
   thread_yield();
@@ -81,8 +75,10 @@ int thread_yield()
 // TODO: waits for a thread to finish
 int thread_join(thread_t *thread, int *retval) 
 {
+  tcb_t *tcb_aux;
+  tcb_aux = (tcb_t *) thread->tcb;
   // revisar esse retval
-  while(thread->tcb->status != 3)
+  while(tcb_aux->status != 3)
     thread_yield();
   /*if(retval != endereçodoretorno)
 	  return 0;*/
@@ -100,9 +96,11 @@ void thread_exit(int status) // revisar o status
 // TODO: selects the next thread to execute
 void scheduler()
 {
-  while(is_empty(&ready_queue.prox) == 0) {
-    if(ready_queue.prox->tcb->status <= 1) { // Verificar o que fazer quando não tiver 
-      current_running = ready_queue.prox->tcb; // thread disponível
+  tcb_t *tcb_aux;
+  while(is_empty(ready_queue.prox) == 0) {
+    tcb_aux = (tcb_t *) ready_queue.prox->thread_tcb;
+    if(tcb_aux->status <= 1) { // Verificar o que fazer quando não tiver 
+      current_running = (tcb_t *) ready_queue.prox->thread_tcb; // thread disponível
       current_node = dequeue(&ready_queue); 
       return;
     }  

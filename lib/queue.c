@@ -7,17 +7,17 @@
   extra-point functionality.
  */
 // TODO: inicializes a queue
-void queue_init(node_t * queue)
+void queue_init(node_t *queue)
 {
   queue->thread_id = -1; // Cabeça
-  queue->tcb = NULL;
+  queue->thread_tcb = NULL;
   queue->prox = NULL;
 }
 
 // TODO: returns the first element of the queue
-node_t *dequeue(node_t * queue)
+node_t *dequeue(node_t *queue)
 {
-  node_t q;
+  node_t *q;
 
   if(is_empty(queue->prox) == 0) {
     q = queue->prox;
@@ -29,7 +29,7 @@ node_t *dequeue(node_t * queue)
 }
 
 // TODO: inserts a node in a queue
-void enqueue(node_t * queue, node_t * item)
+void enqueue(node_t *queue, node_t *item)
 {
   node_t *q;
   
