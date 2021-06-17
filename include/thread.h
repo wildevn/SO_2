@@ -18,8 +18,8 @@ typedef struct tcb {
 	// TODO: define the fields for you TCB
 	status_t status;
   int thread_id;
-  uint64_t *stack;
-  uint64_t *sp;
+  uint64_t *stack; 
+  //uint64_t *sp;
 	uint64_t regs[NUMBER_OF_REGISTERS];
   uint64_t flags;
 } tcb_t;

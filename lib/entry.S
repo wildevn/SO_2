@@ -1,6 +1,6 @@
-	.equ	USER,24
+	.equ	USER,16
 	.equ	CONTEXT_SIZE,136
-	
+
 #define	SAVE_CONTEXT(offset) \
 	movq	%rsp,scratch			  ; \
 	movq	current_running,%rsp		  ; \

@@ -11,6 +11,8 @@ void lock_init(lock_t * l)
 	if (SPIN) {
 		l->status = UNLOCKED;
 	} else {
+    l->status = UNLOCKED;
+    //l->lock_queue = 
 	}
 }
 
