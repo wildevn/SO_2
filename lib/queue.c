@@ -1,13 +1,7 @@
 #include <queue.h>
 #include <stdio.h>
 
-/*
-  This   file    contains   a    function   definitions    for   queue
-  manipulation. You  are free to  choose your own  implementation. You
-  may need to define additional functions if you want to implement the
-  extra-point functionality.
-*/
-// TODO: inicializes a queue
+// Inicializes a queue
 void queue_init(node_t *queue)
 {
   queue->thread_id = -1; // Cabeça
@@ -15,7 +9,7 @@ void queue_init(node_t *queue)
   queue->prox = NULL;
 }
 
-// TODO: returns the first element of the queue
+// Returns the first element of the queue
 node_t *dequeue(node_t *queue)
 {
   node_t *q;
@@ -29,7 +23,7 @@ node_t *dequeue(node_t *queue)
 	return NULL;
 }
 
-// TODO: inserts a node in a queue
+// Inserts a node in a queue
 void enqueue(node_t *queue, node_t *node)
 {
   node_t *q;
@@ -48,7 +42,7 @@ void enqueue(node_t *queue, node_t *node)
   return;
 }
 
-// TODO: checks if a queue is empty
+// Checks if a queue is empty
 int is_empty(node_t *queue)
 {
   if(queue == NULL)

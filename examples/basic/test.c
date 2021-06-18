@@ -26,11 +26,8 @@ int main()
 	thread_init();
 	printf("BEGIN: Time stamp: %ld\n", get_timer());
 	for (i = 0; i < 6; i++) {
-    //printf("oka\n");
 		params[i] = i;
-    //printf("oka\n");
 		thread_create(&thd[i], f1, &params[i]);
-    printf("oka\n");
 	}
 
 	for (i = 0; i < 6; i++) {
