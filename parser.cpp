@@ -4,28 +4,28 @@ void Parser::program()
   while(lToken->name != END_OF_FILE){
     classDeclaration(); // classDeclaration
   }
-  match(END_OF_FILE, NULL, 0); // EOF
+  match(END_OF_FILE, NULL, 0, -1, 0); // EOF
 }
 
 void Parser::mainClass()
 {
-  match(CLASS, NULL, 0); // Class
-  match(ID, NULL, 0);    // nome_classe
-  match(L_BRACES, NULL, 0);// {
-  match(PUBLIC, NULL, 0);  // public
-  match(STATIC, NULL, 0);  // static
-  match(VOID, NULL, 0);    // void
-  match(MAIN, NULL, 0);    // main
-  match(L_PAREN, NULL, 0); // (
-  match(STRING, NULL, 0);  // String
-  match(L_BRACKETS, NULL, 0); // [
-  match(R_BRACKETS, NULL, 0); // ]
-  match(ID, NULL, 0);         // nome_variável
-  match(R_PAREN, NULL, 0);    // )
-  match(L_BRACES, NULL, 0);   // {
+  match(CLASS, NULL, 0, -1, 0); // Class
+  match(ID, NULL, 0, -1, CLASS);    // nome_classe
+  match(L_BRACES, NULL, -1, -1, 0);// {
+  match(PUBLIC, NULL, 0, -1, 0);  // public
+  match(STATIC, NULL, 0, -1, 0);  // static
+  match(VOID, NULL, 0, -1, 0);    // void
+  match(MAIN, NULL, 0, -1, CLASS);    // main
+  match(L_PAREN, NULL, 0, -1, 0); // (
+  match(STRING, NULL, 0, -1, 0);  // String
+  match(L_BRACKETS, NULL, 0, -1, 0); // [
+  match(R_BRACKETS, NULL, 0, -1, 0); // ]
+  match(ID, NULL, 0, -1, 0);         // nome_variável
+  match(R_PAREN, NULL, 0, -1, 0);    // )
+  match(L_BRACES, NULL, 0, -1, 0);   // {
   statement();                // statement
-  match(R_BRACES, NULL, 0);   // }
-  match(R_BRACES, NULL, 0);   // }
+  match(R_BRACES, NULL, 0, -1, 0);   // }
+  match(R_BRACES, NULL, 0, -1, 0);   // }
 }
 
 void Parser::statement() 
@@ -39,33 +39,33 @@ void Parser::statement()
       sentinel = -1;
       advance();
       statement();     // statement
-      match(R_BRACES, NULL, 0); // }
+      match(R_BRACES, NULL, 0, -1, 0); // }
     }
     else if(lToken->name == IF || sentinel == 1) { // if
       sentinel = -1;
       advance();
-      match(L_PAREN, NULL, 0); // (
+      match(L_PAREN, NULL, 0, -1, 0); // (
       expression();   // expression
-      match(R_PAREN, NULL, 0); // )
+      match(R_PAREN, NULL, 0, -1, 0); // )
       statement();    // statement
-      match(ELSE, NULL, 0);    // else
+      match(ELSE, NULL, 0, -1, 0);    // else
       statement();    // statement
     }
     else if(lToken->name == WHILE || sentinel == 2) { // while
       sentinel = -1;
       advance();
-      match(L_PAREN, NULL, 0); // (
+      match(L_PAREN, NULL, 0, -1, 0); // (
       expression();   // expression
-      match(R_PAREN, NULL, 0); // )
+      match(R_PAREN, NULL, 0, -1, 0); // )
       statement();    // statement
     }
     else if(lToken->name == SYSOUTPRINT || sentinel == 3) { // System.out.println
       sentinel = -1;
       advance();
-      match(L_PAREN, NULL, 0); // (
+      match(L_PAREN, NULL, 0, -1, 0); // (
       expression();   // expression
-      match(R_PAREN, NULL, 0); // )
-      match(SEMICOL, NULL, 0); // ;
+      match(R_PAREN, NULL, 0, -1, 0); // )
+      match(SEMICOL, NULL, 0, -1, 0); // ;
     }
     else if(lToken->attribute == ID || sentinel == 4) { // variável
       sentinel = -1;
@@ -75,16 +75,16 @@ void Parser::statement()
           sentinel = -1;
           advance();
           expression();               // expression
-          match(SEMICOL, NULL, 0);             // ;
+          match(SEMICOL, NULL, 0, -1, ID);             // ;
         }
         else if(lToken->name == L_BRACKETS) { // [
           sentinel = -1;
           advance();
           expression();      // expression
-          match(R_BRACKETS, NULL, 0); // ]
-          match(RECEIVE, NULL, 0);    // =
+          match(R_BRACKETS, NULL, 0, -1, 0); // ]
+          match(RECEIVE, NULL, 0, -1, 0);    // =
           expression();      // expression
-          match(SEMICOL, NULL, 0);    // ;
+          match(SEMICOL, NULL, 0, -1, 0);    // ;
         }
         else { // tratamento de erros
           error(0, STATEMENT_AFTER, " ");
@@ -92,7 +92,7 @@ void Parser::statement()
           list = new int[2];
           list[0] = RECEIVE;
           list[1] = L_BRACKETS;
-          sentinel = match(-1, list, 2);
+          sentinel = match(-1, list, 2, -1, 0);
         }
       }while(sentinel != -1 && lToken->name != END_OF_FILE); 
     }
@@ -105,7 +105,7 @@ void Parser::statement()
       list[2] = WHILE;
       list[3] = SYSOUTPRINT;
       list[4] = ID;
-      sentinel = match(-1, list, 5);
+      sentinel = match(-1, list, 5, -1, 0);
     }
   }while(sentinel != -1 && lToken->name != END_OF_FILE);
   delete list;
@@ -147,18 +147,18 @@ void Parser::expression()
       sentinel = -1;
       advance();
       do {
-        if(lToken->name == INT || sentinel == 0) { // int
+        if(lToken->name == INT || sentinel == -1) { // int
           sentinel = -1;
           advance();
-          match(L_BRACKETS, NULL, 0); // [
+          match(L_BRACKETS, NULL, 0, -1, 0); // [
           expression();               // expression
-          match(R_BRACKETS, NULL, 0); // ]
+          match(R_BRACKETS, NULL, 0, -1, 0); // ]
         }
         else if(lToken->name == ID || sentinel == 1) { // ID
           sentinel = -1;
           advance();
-          match(L_PAREN, NULL, 0); // (
-          match(R_PAREN, NULL, 0); // )
+          match(L_PAREN, NULL, 0, -1, 0); // (
+          match(R_PAREN, NULL, 0, -1, 0); // )
         }
         else { // Tratamento de erro
           error(0, EXPRESSION_INT_ID, " ");
@@ -166,7 +166,7 @@ void Parser::expression()
           list = new int[2];
           list[0] = INT;
           list[1] = ID;
-          sentinel = match(-1, list, 2);
+          sentinel = match(-1, list, 2, -1, 0);
         }
       }while(sentinel != -1 && lToken->name != END_OF_FILE);
     }
@@ -179,7 +179,7 @@ void Parser::expression()
       sentinel = -1;
       advance();
       expression();            // expression
-      match(R_PAREN, NULL, 0); // )
+      match(R_PAREN, NULL, 0, -1, 0); // )
       expressionPredict();     // expressionPredict
     }
     else { // Tratamento de erro
@@ -194,7 +194,7 @@ void Parser::expression()
       list[5] = NEW;
       list[6] = NOT;
       list[7] = L_PAREN;
-      sentinel = match(-1, list, 8);
+      sentinel = match(-1, list, 8, -1, 0);
     }
   }while(sentinel != -1 && lToken->name != END_OF_FILE);
   delete list;
@@ -209,7 +209,7 @@ void Parser::expressionPredict()
   else if(lToken->name == L_BRACKETS) { // [
     advance();
     expression();               // expression
-    match(R_BRACKETS, NULL, 0); // ]
+    match(R_BRACKETS, NULL, 0, -1 ,0); // ]
     expressionPredict();
   }
   else if(lToken->name == DOT) {    // .
@@ -220,7 +220,7 @@ void Parser::expressionPredict()
     }
     else if(lToken->name == ID) {     // ID
       advance();
-      match(L_PAREN, NULL, 0);        // (
+      match(L_PAREN, NULL, 0, -1, 0);        // (
       if(lToken->name != R_PAREN) {
         expression();                 // expression
         while(lToken->name == COMMA) {//, 
@@ -228,7 +228,7 @@ void Parser::expressionPredict()
           expression();               // expression
         }
       }
-      match(R_PAREN, NULL, 0);        // )
+      match(R_PAREN, NULL, 0, -1, 0);        // )
       expressionPredict();
     }
   }
@@ -236,44 +236,45 @@ void Parser::expressionPredict()
 
 void Parser::classDeclaration() {
   
-  match(CLASS, NULL, 0); // class
-  match(ID, NULL, 0);    // nome_classe
+  match(CLASS, NULL, 0, -1, 0); // class
+  match(ID, NULL, 0, -1, CLASS);    // nome_classe
+  currentST = new SymbolTable(currentST);
   if(lToken->name == EXTENDS) {// extends
     advance();
-    match(ID, NULL, 0); // nome_classe
+    match(ID, NULL, 0, 1, EXTENDS); // nome_classe
   }
 
-  match(L_BRACES, NULL, 0);     // {
+  match(L_BRACES, NULL, 0, -1, 0);     // {
   while(isType())
     varDeclaration();           // varDecl *
   while(lToken->name == PUBLIC)
     methodDeclaration();        // methodDeclaration *
-  match(R_BRACES, NULL, 0);     // }
+  match(R_BRACES, NULL, 0, -1, 0);     // }
 }
 
 void Parser::varDeclaration() {
   type();         // type
-  match(ID, NULL, 0);      // ID
-  match(SEMICOL, NULL, 0); // ;
+  match(ID, NULL, 0, -1, -1);      // ID
+  match(SEMICOL, NULL, 0, -1, 0); // ;
 }
 
 void Parser::methodDeclaration() {
-  match(PUBLIC, NULL, 0);  // public
+  match(PUBLIC, NULL, 0, -1, 0);  // public
   type();         // type
-  match(ID, NULL, 0);      // ID
-  match(L_PAREN, NULL, 0); // (
+  match(ID, NULL, 0, -1, METHOD);      // ID
+  match(L_PAREN, NULL, 0, -1, 0); // (
   if(isType()) {  
     type();       // type
-    match(ID, NULL, 0);    // ID
+    match(ID, NULL, 0, -1, -1);    // ID
     while(lToken->name == COMMA) { // ,
       advance();
       type();     // type
-      match(ID, NULL, 0);  // ID 
+      match(ID, NULL, 0, -1, -1);  // ID 
     }
   }
-  match(R_PAREN, NULL, 0); // )
+  match(R_PAREN, NULL, 0, -1, 0); // )
 
-  match(L_BRACES, NULL, 0);// { 
+  match(L_BRACES, NULL, 0, -1, 0);// { 
   while(isTypeExtended()) {
     varDeclaration();// varDeclaration *
   }
@@ -281,10 +282,10 @@ void Parser::methodDeclaration() {
   while(lToken->name != RETURN && lToken->name != END_OF_FILE) { 
     statement();  // statement *
   }
-  match(RETURN, NULL, 0);  // return
+  match(RETURN, NULL, 0, -1, 0);  // return
   expression();   // expression
-  match(SEMICOL, NULL, 0); // ;
-  match(R_BRACES, NULL, 0);// }
+  match(SEMICOL, NULL, 0, -1, 0); // ;
+  match(R_BRACES, NULL, 0, -1, 0);// }
 }
 
 void Parser::type() 
@@ -298,7 +299,7 @@ void Parser::type()
       advance();
       if(lToken->name == L_BRACKETS) { // [
         advance();
-        match(R_BRACKETS, NULL, 0); // ]
+        match(R_BRACKETS, NULL, 0, -1, 0); // ]
       }
     }
     else if(lToken->name == BOOLEAN) { // boolean
@@ -316,7 +317,7 @@ void Parser::type()
       list[0] = INT;
       list[1] = BOOLEAN;
       list[2] = ID;
-      match(-1, list, 3);
+      match(-1, list, 3, -1, 0);
     }
   }while(sentinel != -1 && lToken->name != END_OF_FILE);
 }
@@ -362,7 +363,7 @@ int Parser::verType()
   return 0;
 }
 
-int Parser::verVariable(int type, int attribute_return, int check)
+int Parser::verVariable(int type, int check)
 {
   STEntry *s;
   s = currentST->get(lToken->lexeme);
@@ -370,14 +371,29 @@ int Parser::verVariable(int type, int attribute_return, int check)
   if(!s) {
     if(check)
       return 0;
-    if(verType()) {
+    if(verType()) { // Variável ID ou Metodo
       if(lastToken->name == R_BRACKETS)
         lToken->attribute = INT;
       else
         lToken->attribute = lastToken->name;
+      if(type == -1) {
+        if(lastToken->name == CLASS) 
+          type = CLASS;
+        else
+          type = ID;
+      }
+      lToken->name = type;
       s = new STEntry(lToken, lToken->lexeme);
       currentST->add(s);
     }
+    else if(type == CLASS) { // class
+      lToken->attribute = CLASS;
+      s = new STEntry(lToken, lToken->lexeme);
+      currentST->add(s);
+    }
+  }
+  else if(check) {
+    return 1;
   }
   else {
     error(1, -1, "This variable was already declared!");
